@@ -9,21 +9,24 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
+      # 1. Оновлюємо checkout (v4 вже давно)
       - uses: actions/checkout@v4
+
+      # 2. ВАЖЛИВО: використовуємо актуальну версію login-action
       - name: Log in to Docker Hub
-        uses: docker/login-action@v3      
+        uses: docker/login-action@v3      # ← v3, а не v2!
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-     
+      # 3. Використовуємо офіційний build-push-action (він сам робить усе правильно)
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6   
+        uses: docker/build-push-action@v6   # ← найсвіжіша версія
         with:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/fastapi:latest
-          
+          # Опціонально: кеш, щоб швидше будувалося
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
